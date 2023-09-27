@@ -59,4 +59,3 @@ server <- function(input, output, session) {
 
 # shiny app object ----
 shinyApp(ui, server)
-
