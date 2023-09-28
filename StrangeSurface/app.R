@@ -23,10 +23,10 @@ h <- function(ρ, θ, ϕ, alpha){
 
 # make grid
 nρ <- 150L; nθ <- 250L; nϕ <- 150L
-ρ0 <- seq(0, 3.05, length.out = nρ) # ρ runs from 0 to the desired radius
-θ0 <- seq(0, 2*pi, length.out = nθ)
-ϕ0 <- seq(0, pi, length.out = nϕ) 
-G <- expand.grid(Rho = ρ0, Theta = θ0, Phi = ϕ0)
+ρ_ <- seq(0, 3.05, length.out = nρ) # ρ runs from 0 to the desired radius
+θ_ <- seq(0, 2*pi, length.out = nθ)
+ϕ_ <- seq(0, pi, length.out = nϕ) 
+G <- expand.grid(Rho = ρ_, Theta = θ_, Phi = ϕ_)
 
 
 #--- SHINY APP ----####
@@ -54,7 +54,7 @@ server <- function(input, output, session) {
     alpha <- input[["alpha"]] / 4
     voxel <- with(G, array(h(Rho, Theta, Phi, alpha), dim = c(nρ, nθ, nϕ)))
     # 3d contour
-    surf <- contour3d(voxel, level = 0, x = ρ0, y = θ0, z = ϕ0)
+    surf <- contour3d(voxel, level = 0, x = ρ_, y = θ_, z = ϕ_)
     # transform to Cartesian coordinates
     ρθϕ <- surf[["vertices"]]
     ρ <- ρθϕ[, 1L]; θ <- ρθϕ[, 2L]; ϕ <- ρθϕ[, 3L] 
