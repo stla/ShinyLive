@@ -8,10 +8,31 @@ f <- function(x, y, z, alpha) {
   A <- cospi(alpha)
   B <- sinpi(alpha)
   B2 <- B*B
+  AB2 <- A*B2
   z2 <- z*z
   z4 <- z2*z2
-  z4*(B2-2*A-2) + 4*x*y^2*(A*B2-4*B2) + x*z2*(A*B2-B2) + 
-    3*z2*(A*B2-2*A+2) + x*(B2-A*B2) + A*B2 - B2
+  z4*(B2-2*A-2) + 4*x*y^2*(AB2-4*B2) + x*z2*(AB2-B2) + 
+    3*z2*(AB2-2*A+2) + x*(B2-AB2) + AB2 - B2
+}
+
+# library(cOde)
+# jacobianSymb(
+#   c(f = "z^4*(B2-2*A-2) + 4*x*y^2*(AB2-4*B2) + x*z^2*(AB2-B2) + 3*z^2*(AB2-2*A+2) + x*(B2-AB2) + AB2 - B2"),
+#   c("x", "y", "z")
+# )
+
+grad <- function(x, y, z, alpha) {
+  A <- cospi(alpha)
+  B <- sinpi(alpha)
+  B2 <- B*B
+  AB2 <- A*B2
+  z2 <- z*z
+  z3 <- z*z2
+  cbind(
+    4*(AB2-4*B2)*y^2 + (AB2-B2)*(z2 - 1), 
+    8*(AB2-4*B2)*x*y,
+    4**(B2-2*A-2)*z3 + 2*(AB2-B2)*x*z + 6*(AB2-2*A+2)*z
+  )
 }
 
 h <- function(ρ, θ, ϕ, alpha){
@@ -22,7 +43,7 @@ h <- function(ρ, θ, ϕ, alpha){
 }
 
 # make grid
-nρ <- 150L; nθ <- 250L; nϕ <- 150L
+nρ <- 100L; nθ <- 200L; nϕ <- 100L
 ρ_ <- seq(0, 3.05, length.out = nρ) # ρ runs from 0 to the desired radius
 θ_ <- seq(0, 2*pi, length.out = nθ)
 ϕ_ <- seq(0, pi, length.out = nϕ) 
@@ -46,7 +67,7 @@ ui <- fluidPage(
   sidebarLayout(
     sidebarPanel(
       sliderInput(
-        "alpha", "alpha", min = 2.2, max = 4, value = 3, step = 0.1
+        "alpha", "alpha", min = 2.2, max = 3.8, value = 3, step = 0.1
       ),
       br(),
       textOutput("info")
@@ -75,7 +96,8 @@ server <- function(input, output, session) {
       ρ * cos(ϕ)
     )
     triangles <- surf[["triangles"]]
-    list(vertices, triangles)
+    normals <- -grad(vertices[, 1L], vertices[, 2L], vertices[, 3L], alpha)
+    list(vertices, triangles, normals)
   })
   
   output[["surface"]] <- renderR3js({
@@ -92,14 +114,14 @@ server <- function(input, output, session) {
         ),
         vertices = vertices,
         faces = mesh[[2L]],
-        normals = NULL,
+        normals = mesh[[3L]],
         col = "maroon"
       )
     )
   })
   
   output[["info"]] <- renderText({
-    if(packageVersion("r3js") <= "0.2.0") {
+    if(packageVersion("r3js") <= "0.0.2") {
       paste0(
         "When you change `alpha`, the new plot is added to the previous one. ",
         "You have to upgrade the 'r3js' package to get rid of this bug." 
