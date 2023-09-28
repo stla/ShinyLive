@@ -99,7 +99,7 @@ server <- function(input, output, session) {
   })
   
   output[["info"]] <- renderText({
-    if(packageVersion("r3js") <= "0.0.2") {
+    if(packageVersion("r3js") <= "0.2.0") {
       paste0(
         "When you change `alpha`, the new plot is added to the previous one. ",
         "You have to upgrade the 'r3js' package to get rid of this bug." 

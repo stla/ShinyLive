@@ -1,4 +1,4 @@
-webr::install("RcppColors")
+webr::install("RcppColors") # comment this line unless you use Shiny live
 
 library(RcppColors)
 library(shiny)
@@ -23,13 +23,27 @@ Zimg <- function(w1, h1, w2, h2) {
 
 #### SHINY APP ----####
 
+css <- "
+#info {
+  background-color: #ddd;
+}
+"
+
+if(packageVersion("RcppColors") < "0.5.0") {
+  colormaps <- paste0("colorMap", c(1L, 2L, 4L))
+} else {
+  colormaps <- paste0("colorMap", c(1L, 2L, 4L:14L))
+}
+
 ui <- fluidPage(
+  tags$head(
+    tags$style(HTML(css))
+  ),
   br(),
   sidebarLayout(
     sidebarPanel(
       selectInput(
-        "colormap", "Color map",
-        choices = paste0("colorMap", c(1L, 2L, 4L:14L))
+        "colormap", "Color map", choices = colormaps
       ),
       sliderInput(
         "nrmlz", "normalization", min = 1, max = 256, step = 5, value = 256
@@ -42,6 +56,8 @@ ui <- fluidPage(
         sliderInput("w2", "w2", min = 0, max = 200, step = 4, value = 160),
         sliderInput("h2", "h2", min = 0, max = 200, step = 4, value = 160)
       ),
+      br(),
+      textOutput("info"),
       width = 6
     ),
     mainPanel(
@@ -91,6 +107,15 @@ server <- function(input, output, session) {
     )
     rasterImage(Img(), 0, 0, 1, 1)
   }, width = 512, height = 512)
+  
+  output[["info"]] <- renderText({
+    if(packageVersion("RcppColors") < "0.5.0") {
+      paste0(
+        "This app uses an old version of the 'RcppColors' package. ",
+        "Upgrade this package to get more color maps." 
+      )
+    }
+  })
   
 }
 
