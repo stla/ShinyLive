@@ -40,6 +40,13 @@ ui <- pageWithSidebar(
   
   # Sidebar with a slider input for number of observations
   sidebarPanel(
+    helpText(
+      tags$a(
+        "Reference: 'stlapblog'",
+        href = "https://stla.github.io/stlapblog/posts/samplesize_mean.html"
+      )
+    ),
+    
     h3("Standard deviation uncertainty:"),
     helpText(
       "Note: the distribution plotted at right shows the uncertainty 

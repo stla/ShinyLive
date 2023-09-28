@@ -3,13 +3,11 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Sample size</title>
-
+    <title>Shiny App</title>
     <script
       src="./../shinylive/load-shinylive-sw.js"
       type="module"
     ></script>
-    
     <script type="module">
       import { runApp } from "./../shinylive/shinylive.js";
       const response = await fetch("./app.json");
@@ -17,14 +15,6 @@
         throw new Error("HTTP error loading app.json: " + response.status);
       }
       const appFiles = await response.json();
-      
-//      await webR.installPackages(["ggplot2", "grid", "htmlTable"])
-/*  import { WebR } from 'https://webr.r-wasm.org/latest/webr.mjs';
-  const webR = new WebR();
-        await webR.init();
-      console.log('webR ready');
-      await webR.installPackages(["shiny", "htmlTable", "ggplot2", "grid"])
-*/
 
       const appRoot = document.getElementById("root");
       runApp(appRoot, "viewer", {startFiles: appFiles}, "r");
