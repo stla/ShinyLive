@@ -11,7 +11,7 @@ f <- function(x, y, z, alpha) {
   z2 <- z*z
   z4 <- z2*z2
   z4*(B2-2*A-2) + 4*x*y^2*(A*B2-4*B2) + x*z2*(A*B2-B2) + 
-    3*z2*(A*B2-2*A+2) + x*(B2-A*B^2) + A*B2 - B2
+    3*z2*(A*B2-2*A+2) + x*(B2-A*B2) + A*B2 - B2
 }
 
 h <- function(ρ, θ, ϕ, alpha){
@@ -32,13 +32,24 @@ G <- expand.grid(Rho = ρ_, Theta = θ_, Phi = ϕ_)
 #--- SHINY APP ----####
 library(shiny)
 
+css <- "
+#info {
+  background-color: #ddd;
+}
+"
+
 # shiny UI ####
 ui <- fluidPage(
+  tags$head(
+    tags$style(HTML(css))
+  ),
   sidebarLayout(
     sidebarPanel(
       sliderInput(
-        "alpha", "alpha", min = 2, max = 4, value = 3, step = 0.1
-      )
+        "alpha", "alpha", min = 2.2, max = 4, value = 3, step = 0.1
+      ),
+      br(),
+      textOutput("info")
     ),
     mainPanel(
       r3jsOutput("surface", height = "512px")
@@ -85,6 +96,15 @@ server <- function(input, output, session) {
         col = "maroon"
       )
     )
+  })
+  
+  output[["info"]] <- renderText({
+    if(packageVersion("r3js") <= "0.0.2") {
+      paste0(
+        "When you change `alpha`, the new plot is added to the previous one. ",
+        "You have to upgrade the 'r3js' package to get rid of this bug." 
+      )
+    }
   })
   
 }
