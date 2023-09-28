@@ -1,4 +1,4 @@
-webr::install(deldir)
+webr::install("deldir")
 library(deldir)
 
 n <- 256L
