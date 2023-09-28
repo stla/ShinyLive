@@ -6,7 +6,7 @@ body {
 }
 
 #github {
-  background-image: url(./Github-Mark.png);
+  background-image: url(https://raw.githubusercontent.com/stla/ShinyLive/main/GitHub-Mark.png);
   background-repeat: no-repeat;
   background-position: center;
   position: absolute;
