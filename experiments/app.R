@@ -1,7 +1,7 @@
 library(shiny)
 
 ui <- fluidPage(
-  tags$head(tags$script("test.js")),
+  tags$head(tags$script(src = "test.js")),
   fileInput("file", "Upload"),
   verbatimTextOutput("wd"),
   verbatimTextOutput("file")
