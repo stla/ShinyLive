@@ -1,4 +1,5 @@
 webr::install("deldir")
+webr::install("polyclip")
 library(deldir)
 
 n <- 256L
